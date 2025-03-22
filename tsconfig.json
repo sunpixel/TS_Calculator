@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "target": "ES2024",
+      "lib": ["es2024", "dom"],
+      "module": "commonjs",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "out",
+    }
+  }
