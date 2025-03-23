@@ -80,7 +80,8 @@ initializeButtons(functionButtonIds, handleFunctionButtonClick);
 // Supplementary functions
 
 function addToDataScreen(data: string) {
-    if (dataScreen && currentEquation.length < 3)
+    
+    if (dataScreen)
     {
         if (currentNumber.length > 0 && cleared == false || dataScreen?.textContent?.length != 1)
         {
@@ -121,13 +122,13 @@ function addToDataScreen(data: string) {
                     }
                 }
                 else{
-                    console.log('Caught e ELSE')
                     data = " " + data + " "
                     dataScreen.textContent += data
                     currentEquation.push(currentNumber)
                     currentEquation.push(data)
                     currentNumber = ''
                     // Test Data
+                    if (currentEquation.length > 3) process_data()
                     console.log(currentEquation)
                 }
             }
@@ -157,26 +158,30 @@ function addToDataScreen(data: string) {
                     currentNumber = '0.'
                     dataScreen.textContent = "0."
                 }
-                /*
-                data = " " + data + " "
-                currentEquation.push(currentNumber)
-                currentNumber = '0'
-                */
             }
         }
         cleared = false
         console.log(currentNumber)
     }
+    console.log(currentEquation.length)
+}
 
-    else {
-        let to_do = currentEquation[1]      // Takes the operation that needs to be performed
-        let to_move = currentEquation [3]   // Takes operation that is to be moved
-        let numbers = []
-    }
+function process_data() {
+    console.log("XXXXXXXXXXX Entered CLEAR XXXXXXXXXX")
+    let to_do = currentEquation[1]      // Takes the operation that needs to be performed
+    let to_move = currentEquation [3]   // Takes operation that is to be moved
+    let numbers = [currentEquation[0], currentEquation[2]]
+    currentEquation.pop()
+    historyEquations.push(currentEquation)
+    console.log(historyEquations)
+}
+
+function calculate(nums: string[], operand: string) {
+    
 }
 
 function clearScreen() {
-    if(dataScreen) {
+    if(dataScreen && currentEquation.length < 3) {
         dataScreen.textContent = '0'
         currentEquation = []    // Clears array of all the elements
         cleared = true

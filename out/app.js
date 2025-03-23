@@ -65,7 +65,7 @@ initializeButtons(numberButtonIds, handleNumberButtonClick);
 initializeButtons(functionButtonIds, handleFunctionButtonClick);
 // Supplementary functions
 function addToDataScreen(data) {
-    if (dataScreen && currentEquation.length < 3) {
+    if (dataScreen) {
         if (currentNumber.length > 0 && cleared == false || dataScreen?.textContent?.length != 1) {
             console.log('Enterd main');
             try {
@@ -105,6 +105,8 @@ function addToDataScreen(data) {
                     currentEquation.push(data);
                     currentNumber = '';
                     // Test Data
+                    if (currentEquation.length > 3)
+                        process_data();
                     console.log(currentEquation);
                 }
             }
@@ -140,9 +142,19 @@ function addToDataScreen(data) {
         cleared = false;
         console.log(currentNumber);
     }
+    console.log(currentEquation.length);
+}
+function process_data() {
+    console.log("XXXXXXXXXXX Entered CLEAR XXXXXXXXXX");
+    let to_do = currentEquation[1]; // Takes the operation that needs to be performed
+    let to_move = currentEquation[3]; // Takes operation that is to be moved
+    let numbers = [currentEquation[0], currentEquation[2]];
+    currentEquation.pop();
+    historyEquations.push(currentEquation);
+    console.log(historyEquations);
 }
 function clearScreen() {
-    if (dataScreen) {
+    if (dataScreen && currentEquation.length < 3) {
         dataScreen.textContent = '0';
         currentEquation = []; // Clears array of all the elements
         cleared = true;
