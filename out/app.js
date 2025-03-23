@@ -98,7 +98,6 @@ function addToDataScreen(data) {
                     }
                 }
                 else {
-                    console.log('Caught e ELSE');
                     data = " " + data + " ";
                     dataScreen.textContent += data;
                     currentEquation.push(currentNumber);
@@ -132,11 +131,6 @@ function addToDataScreen(data) {
                     currentNumber = '0.';
                     dataScreen.textContent = "0.";
                 }
-                /*
-                data = " " + data + " "
-                currentEquation.push(currentNumber)
-                currentNumber = '0'
-                */
             }
         }
         cleared = false;
@@ -152,6 +146,8 @@ function process_data() {
     currentEquation.pop();
     historyEquations.push(currentEquation);
     console.log(historyEquations);
+}
+function calculate(nums, operand) {
 }
 function clearScreen() {
     if (dataScreen && currentEquation.length < 3) {

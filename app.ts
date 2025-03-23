@@ -12,6 +12,18 @@ let historyEquations: string[][] = []   // Declare them as empty
 
 let cleared = false
 
+// Define math logic
+
+const mathOperations: { [key: string]: (x: string, y: string) => number } = {
+    add: (x, y) => Number(x) + Number(y),
+    subtract: (x, y) => Number(x) - Number(y),
+    multiply: (x, y) => Number(x) * Number(y),
+    division: (x, y) => Number(x) * Number(y),
+    power: (x, y) => Math.pow(Number(x), Number(y)),
+    sqrt: (x) => Math.sqrt(Number(x))   // Needs checking for negative numbers
+  };
+
+
 // Define button logic as a map
 const numberButtonLogic: { [key: string]: () => void } = {
     "0": () => addToDataScreen('0'),
@@ -177,7 +189,7 @@ function process_data() {
 }
 
 function calculate(nums: string[], operand: string) {
-    
+
 }
 
 function clearScreen() {
