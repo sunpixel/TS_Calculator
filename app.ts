@@ -6,9 +6,11 @@ const functionButtonIds = [
 ];
 
 const dataScreen = document.getElementById("DataScreen")
-let currentNumber: string
+let currentNumber: string = ''
 let currentEquation: string[] = []      // Delcare as empty
 let historyEquations: string[][] = []   // Declare them as empty
+
+let cleared = false
 
 // Define button logic as a map
 const numberButtonLogic: { [key: string]: () => void } = {
@@ -37,7 +39,7 @@ const functionButtonLogic: { [key: string]: () => void } = {
 
     // Main and easy
 
-    "clear": () => console.log("Clearing input"),   // Call to clear
+    "clear": () =>  clearScreen(),   // Call to clear
     "multiply": () => addToDataScreen('x'),
     "divide": () => addToDataScreen('/'),
     "plus": () => addToDataScreen('+'),
@@ -78,9 +80,9 @@ initializeButtons(functionButtonIds, handleFunctionButtonClick);
 // Supplementary functions
 
 function addToDataScreen(data: string) {
-    if (dataScreen)
+    if (dataScreen && currentEquation.length < 3)
     {
-        if (dataScreen.textContent?.length != 1 || currentNumber)
+        if (currentNumber.length > 0 && cleared == false || dataScreen?.textContent?.length != 1)
         {
             console.log('Enterd main')
             try {
@@ -109,9 +111,13 @@ function addToDataScreen(data: string) {
 
             catch (e) {
                 if(data == '.'){
-                    if(currentNumber.indexOf('.') == -1) {
+                    if(currentNumber.indexOf('.') == -1 && currentNumber.length > 0) {
                         currentNumber += '.'
                         dataScreen.textContent += data
+                    }
+                    else{
+                        currentNumber += '0.'
+                        dataScreen.textContent += '0.'
                     }
                 }
                 else{
@@ -119,11 +125,19 @@ function addToDataScreen(data: string) {
                     data = " " + data + " "
                     dataScreen.textContent += data
                     currentEquation.push(currentNumber)
+                    currentEquation.push(data)
                     currentNumber = ''
+                    // Test Data
+                    console.log(currentEquation)
                 }
             }
         }
+
+
+        
         // For the frist symbol of currentNumber which cannot be 0, unless its dot that is pressed
+
+
         else{
             console.log('Enter sub')
             try {
@@ -150,7 +164,14 @@ function addToDataScreen(data: string) {
                 */
             }
         }
+        cleared = false
         console.log(currentNumber)
+    }
+
+    else {
+        let to_do = currentEquation[1]      // Takes the operation that needs to be performed
+        let to_move = currentEquation [3]   // Takes operation that is to be moved
+        let numbers = []
     }
 }
 
@@ -158,5 +179,6 @@ function clearScreen() {
     if(dataScreen) {
         dataScreen.textContent = '0'
         currentEquation = []    // Clears array of all the elements
+        cleared = true
     }
 }

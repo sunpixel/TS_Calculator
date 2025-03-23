@@ -6,8 +6,10 @@ const functionButtonIds = [
     "btn_clear", "btn_multiply", "btn_divide", "btn_plus", "btn_minus", "btn_dot", "btn_equals"
 ];
 const dataScreen = document.getElementById("DataScreen");
-let currentNumber;
-let currentEquation = [];
+let currentNumber = '';
+let currentEquation = []; // Delcare as empty
+let historyEquations = []; // Declare them as empty
+let cleared = false;
 // Define button logic as a map
 const numberButtonLogic = {
     "0": () => addToDataScreen('0'),
@@ -30,7 +32,7 @@ const functionButtonLogic = {
     "power": () => console.log("Calculating power"), // Needed
     "root": () => console.log("Calculating square root"), // Needed
     // Main and easy
-    "clear": () => console.log("Clearing input"), // Call to clear
+    "clear": () => clearScreen(), // Call to clear
     "multiply": () => addToDataScreen('x'),
     "divide": () => addToDataScreen('/'),
     "plus": () => addToDataScreen('+'),
@@ -63,8 +65,8 @@ initializeButtons(numberButtonIds, handleNumberButtonClick);
 initializeButtons(functionButtonIds, handleFunctionButtonClick);
 // Supplementary functions
 function addToDataScreen(data) {
-    if (dataScreen) {
-        if (dataScreen.textContent?.length != 1 || currentNumber) {
+    if (dataScreen && currentEquation.length < 3) {
+        if (currentNumber.length > 0 && cleared == false || dataScreen?.textContent?.length != 1) {
             console.log('Enterd main');
             try {
                 let num = Number(data); // try to convert to number from string
@@ -86,9 +88,13 @@ function addToDataScreen(data) {
             // On any operator used add
             catch (e) {
                 if (data == '.') {
-                    if (currentNumber.indexOf('.') == -1) {
+                    if (currentNumber.indexOf('.') == -1 && currentNumber.length > 0) {
                         currentNumber += '.';
                         dataScreen.textContent += data;
+                    }
+                    else {
+                        currentNumber += '0.';
+                        dataScreen.textContent += '0.';
                     }
                 }
                 else {
@@ -96,7 +102,10 @@ function addToDataScreen(data) {
                     data = " " + data + " ";
                     dataScreen.textContent += data;
                     currentEquation.push(currentNumber);
+                    currentEquation.push(data);
                     currentNumber = '';
+                    // Test Data
+                    console.log(currentEquation);
                 }
             }
         }
@@ -128,6 +137,14 @@ function addToDataScreen(data) {
                 */
             }
         }
+        cleared = false;
         console.log(currentNumber);
+    }
+}
+function clearScreen() {
+    if (dataScreen) {
+        dataScreen.textContent = '0';
+        currentEquation = []; // Clears array of all the elements
+        cleared = true;
     }
 }
