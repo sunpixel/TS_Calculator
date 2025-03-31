@@ -1,4 +1,5 @@
-import * as MathFun from "./math";
+import * as MathFun from "./math.js";
+import { cotan, tan, sin, cosin, sqrt, calculate } from "./math";
 
 
 // Define button IDs
@@ -8,7 +9,7 @@ const functionButtonIds = [
     "btn_clear", "btn_multiply", "btn_divide", "btn_plus", "btn_minus", "btn_dot", "btn_equals"
 ];
 
-const dataScreen = document.getElementById("DataScreen")
+const dataScreen = document.getElementById("DataScreen")!!; // Ensure not null
 let currentNumber: string = ''
 let currentEquation: string[] = []      // Represent an equation that will happen
 let historyEquations: string[][] = []   // A history of all availiable equations
@@ -17,48 +18,40 @@ let cleared = false
 
 // Define math logic ###DEPRICATED###
 
-const mathOperations: { [key: string]: (x: string, y: string) => number } = {
-    add: (x, y) => Number(x) + Number(y),
-    subtract: (x, y) => Number(x) - Number(y),
-    multiply: (x, y) => Number(x) * Number(y),
-    division: (x, y) => Number(x) * Number(y),
-    power: (x, y) => Math.pow(Number(x), Number(y)),
-    sqrt: (x) => Math.sqrt(Number(x))   // Needs checking for negative numbers (Not YET needed (Negatives not implemented))
-  };
 
 
 // Define button logic as a map
 const numberButtonLogic: { [key: string]: () => void } = {
-    "0": () => addToDataScreen('0'),
-    "1": () => addToDataScreen('1'),
-    "2": () => addToDataScreen('2'),
-    "3": () => addToDataScreen('3'),
-    "4": () => addToDataScreen('4'),
-    "5": () => addToDataScreen('5'),
-    "6": () => addToDataScreen('6'),
-    "7": () => addToDataScreen('7'),
-    "8": () => addToDataScreen('8'),
-    "9": () => addToDataScreen('9'),
+    "0": () => addToDataScreen('0', dataScreen),
+    "1": () => addToDataScreen('1', dataScreen),
+    "2": () => addToDataScreen('2', dataScreen),
+    "3": () => addToDataScreen('3', dataScreen),
+    "4": () => addToDataScreen('4', dataScreen),
+    "5": () => addToDataScreen('5', dataScreen),
+    "6": () => addToDataScreen('6', dataScreen),
+    "7": () => addToDataScreen('7', dataScreen),
+    "8": () => addToDataScreen('8', dataScreen),
+    "9": () => addToDataScreen('9', dataScreen),
 };
 
 const functionButtonLogic: { [key: string]: () => void } = {
 
     // Hard and annoying | Seperate function is to be created to work with them
 
-    "sin": () => console.log("Calculating sine"),
-    "cosin": () => console.log("Calculating cosine"),
-    "tan": () => console.log("Calculating tangent"),
-    "cotan": () => console.log("Calculating cotangent"),
-    "root": () => console.log("Calculating square root"),
+    "sin": () => complex_proccess(1),
+    "cosin": () => complex_proccess(2),
+    "tan": () => complex_proccess(3),
+    "cotan": () => complex_proccess(4),
+    "root": () => complex_proccess(5),
 
     // Main and easy
-    "power": () => addToDataScreen('**'),
+    "power": () => addToDataScreen('**', dataScreen),
     "clear": () =>  clearScreen(),   // Call to clear
-    "multiply": () => addToDataScreen('x'),
-    "divide": () => addToDataScreen('/'),
-    "plus": () => addToDataScreen('+'),
-    "minus": () => addToDataScreen('-'),
-    "dot": () => addToDataScreen('.'),
+    "multiply": () => addToDataScreen('x', dataScreen),
+    "divide": () => addToDataScreen('/', dataScreen),
+    "plus": () => addToDataScreen('+', dataScreen),
+    "minus": () => addToDataScreen('-', dataScreen),
+    "dot": () => addToDataScreen('.', dataScreen),
     "equals": () => console.log("Calculating result"),  // Call to display result
 };
 
@@ -84,39 +77,26 @@ function handleFunctionButtonClick(id: string) {
     functionButtonLogic[functionName]?.();
 }
 
-// Initialize number buttons
-initializeButtons(numberButtonIds, handleNumberButtonClick);
-
-// Initialize function buttons
-initializeButtons(functionButtonIds, handleFunctionButtonClick);
-
-
 // Supplementary functions
 
-function addToDataScreen(data: string) {
-    
-    if (dataScreen)
-    {
-        if (currentNumber.length > 0 && cleared == false || dataScreen?.textContent?.length != 1)
-        {
+function addToDataScreen(data: string, dataScreen: HTMLElement) {
+    if (dataScreen) {
+        if (currentNumber.length > 0 && cleared == false || dataScreen?.textContent?.length != 1) {
             console.log('Enterd main')
             try {
                 let num = Number(data)  // try to convert to number from string
 
-                if(Number.isNaN(num)) throw new Error("Not A Number")
-                
-                if (data == '0')
-                {
+                if (Number.isNaN(num)) throw new Error("Not A Number")
+
+                if (data == '0') {
                     // If dot exists in currentNumber then add 0, otherwise skip 
-                    if(currentNumber.indexOf('.') != -1 || currentNumber.indexOf('0') != 0)
-                    {
+                    if (currentNumber.indexOf('.') != -1 || currentNumber.indexOf('0') != 0) {
                         currentNumber += data
                         dataScreen.textContent += data
                     }
                     //if(currentNumber.indexOf('0') != 0)
                 }
-                else
-                {
+                else {
                     currentNumber += data
                     dataScreen.textContent += data
                 }
@@ -125,17 +105,17 @@ function addToDataScreen(data: string) {
             // On any operator used add
 
             catch (e) {
-                if(data == '.'){
-                    if(currentNumber.indexOf('.') == -1 && currentNumber.length > 0) {
+                if (data == '.') {
+                    if (currentNumber.indexOf('.') == -1 && currentNumber.length > 0) {
                         currentNumber += '.'
                         dataScreen.textContent += data
                     }
-                    else{
+                    else {
                         currentNumber += '0.'
                         dataScreen.textContent += '0.'
                     }
                 }
-                else{
+                else {
                     data = " " + data + " "
                     dataScreen.textContent += data
                     currentEquation.push(currentNumber)
@@ -154,18 +134,18 @@ function addToDataScreen(data: string) {
         }
 
 
-        
+
         // For the frist symbol of currentNumber which cannot be 0, unless its dot that is pressed
 
 
-        else{
+        else {
             console.log('Enter sub')
             try {
                 let num = Number(data)  // try to convert to number from string
-                if(Number.isNaN(num)) throw new Error("Not A Number")
+                if (Number.isNaN(num)) throw new Error("Not A Number")
                 console.log(data)
                 console.log('Try good')
-                if(data != '0'){
+                if (data != '0') {
                     currentNumber = data
                     dataScreen.textContent = data
                 }
@@ -173,7 +153,7 @@ function addToDataScreen(data: string) {
             // On any operator used
             // Cannot be used before number
             catch (e) {
-                if(data == '.'){
+                if (data == '.') {
                     currentNumber = '0.'
                     dataScreen.textContent = "0."
                 }
@@ -188,11 +168,40 @@ function addToDataScreen(data: string) {
 // Comes forward when any of the complex functions are used
 // Will use last number to calculate result and replace it
 
-function complex_proccess(func_number: number){
-    switch(func_number){
-        case 1: 
-            MathFun.sin(currentNumber)
+function complex_proccess(func_number: number) {
+    let result = '';
+    let name = '';
+    switch (func_number) {
+        case 1:
+            result = MathFun.sin(currentNumber); // Use MathFun.sin
+            name = 'sin';
             break;
+        case 2:
+            result = MathFun.cosin(currentNumber); // Use MathFun.cosin
+            name = 'cosin';
+            break;
+        case 3:
+            result = MathFun.tan(currentNumber); // Use MathFun.tan
+            name = 'tan';
+            break;
+        case 4:
+            result = MathFun.cotan(currentNumber); // Use MathFun.cotan
+            name = 'cotan';
+            break;
+        case 5:
+            result = MathFun.sqrt(currentNumber); // Use MathFun.sqrt
+            name = 'sqrt';
+            break;
+    }
+    // Current Position is 3
+    if (currentEquation.length > 1) {
+        currentEquation[2] = result
+    }
+    // Current Position is 1
+    else {
+        currentEquation[0] = result
+        if (dataScreen) dataScreen.textContent = result
+        historyEquations.push([currentNumber, name, 'None'])
     }
 }
 
@@ -201,30 +210,56 @@ function complex_proccess(func_number: number){
 function process_data() {
     console.log("XXXXXXXXXXX Entered PORCCESS DATA XXXXXXXXXX")
     let to_do = currentEquation[1].trim()									// Takes the operation that needs to be performed
-    let to_move = currentEquation [3].trim()								// Takes operation that is to be moved
+    let to_move = currentEquation[3].trim()								// Takes operation that is to be moved
     let numbers = [currentEquation[0], currentEquation[2]]				// Numbers to be calculated
     // Needs calculation of first equation before making other changes
-	currentEquation.pop()
+    currentEquation.pop()
     historyEquations.push(currentEquation)
     console.log(historyEquations)
 
-	let result = MathFun.calculate(numbers, to_do)							// Calculate result
+    let result = MathFun.calculate(numbers, to_do)							// Calculate result
 
-	to_move = " " + to_move + " "													// Makes it easier to read
-	currentEquation = [result, to_move]
+    to_move = " " + to_move + " "													// Makes it easier to read
+    currentEquation = [result, to_move]
 
-	if (dataScreen){
-		dataScreen.textContent = result + " " + to_move + " "
-	}
+    if (dataScreen) {
+        dataScreen.textContent = result + " " + to_move + " "
+    }
 }
 
 
 
 function clearScreen() {
-	console.log("CLEAR entered")
-    if(dataScreen && currentEquation.length < 3) {
+    console.log("CLEAR entered")
+    if (dataScreen && currentEquation.length < 3) {
         dataScreen.textContent = '0'
         currentEquation = []    // Clears array of all the elements
         cleared = true
     }
 }
+
+
+
+// Global declaration
+
+declare global {
+    interface Window {
+        MathFun: typeof MathFun;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const dataScreen = document.getElementById("DataScreen");
+    if (!dataScreen) {
+        console.error("DataScreen element not found!");
+        return;
+    }
+
+    // Initialize number buttons
+    initializeButtons(numberButtonIds, handleNumberButtonClick);
+
+    // Initialize function buttons
+    initializeButtons(functionButtonIds, handleFunctionButtonClick);
+
+    console.log("Calculator initialized successfully!");
+});

@@ -1,83 +1,72 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const math_1 = require("./math");
+import * as MathFun from "./math.js";
 // Define button IDs
 const numberButtonIds = ["btn_0", "btn_1", "btn_2", "btn_3", "btn_4", "btn_5", "btn_6", "btn_7", "btn_8", "btn_9"];
 const functionButtonIds = [
     "btn_sin", "btn_cosin", "btn_tan", "btn_cotan", "btn_power", "btn_root",
     "btn_clear", "btn_multiply", "btn_divide", "btn_plus", "btn_minus", "btn_dot", "btn_equals"
 ];
-const dataScreen = document.getElementById("DataScreen");
+const dataScreen = document.getElementById("DataScreen"); // Ensure not null
 let currentNumber = '';
-let currentEquation = []; // Delcare as empty
-let historyEquations = []; // Declare them as empty
+let currentEquation = []; // Represent an equation that will happen
+let historyEquations = []; // A history of all availiable equations
 let cleared = false;
 // Define math logic ###DEPRICATED###
-const mathOperations = {
-    add: (x, y) => Number(x) + Number(y),
-    subtract: (x, y) => Number(x) - Number(y),
-    multiply: (x, y) => Number(x) * Number(y),
-    division: (x, y) => Number(x) * Number(y),
-    power: (x, y) => Math.pow(Number(x), Number(y)),
-    sqrt: (x) => Math.sqrt(Number(x)) // Needs checking for negative numbers (Not YET needed (Negatives not implemented))
-};
 // Define button logic as a map
 const numberButtonLogic = {
-    "0": () => addToDataScreen('0'),
-    "1": () => addToDataScreen('1'),
-    "2": () => addToDataScreen('2'),
-    "3": () => addToDataScreen('3'),
-    "4": () => addToDataScreen('4'),
-    "5": () => addToDataScreen('5'),
-    "6": () => addToDataScreen('6'),
-    "7": () => addToDataScreen('7'),
-    "8": () => addToDataScreen('8'),
-    "9": () => addToDataScreen('9'),
+    "0": () => addToDataScreen('0', dataScreen),
+    "1": () => addToDataScreen('1', dataScreen),
+    "2": () => addToDataScreen('2', dataScreen),
+    "3": () => addToDataScreen('3', dataScreen),
+    "4": () => addToDataScreen('4', dataScreen),
+    "5": () => addToDataScreen('5', dataScreen),
+    "6": () => addToDataScreen('6', dataScreen),
+    "7": () => addToDataScreen('7', dataScreen),
+    "8": () => addToDataScreen('8', dataScreen),
+    "9": () => addToDataScreen('9', dataScreen),
 };
 const functionButtonLogic = {
     // Hard and annoying | Seperate function is to be created to work with them
-    "sin": () => console.log("Calculating sine"),
-    "cosin": () => console.log("Calculating cosine"),
-    "tan": () => console.log("Calculating tangent"),
-    "cotan": () => console.log("Calculating cotangent"),
-    "root": () => console.log("Calculating square root"),
+    "sin": () => complex_proccess(1),
+    "cosin": () => complex_proccess(2),
+    "tan": () => complex_proccess(3),
+    "cotan": () => complex_proccess(4),
+    "root": () => complex_proccess(5),
     // Main and easy
-    "power": () => addToDataScreen('**'),
+    "power": () => addToDataScreen('**', dataScreen),
     "clear": () => clearScreen(), // Call to clear
-    "multiply": () => addToDataScreen('x'),
-    "divide": () => addToDataScreen('/'),
-    "plus": () => addToDataScreen('+'),
-    "minus": () => addToDataScreen('-'),
-    "dot": () => addToDataScreen('.'),
+    "multiply": () => addToDataScreen('x', dataScreen),
+    "divide": () => addToDataScreen('/', dataScreen),
+    "plus": () => addToDataScreen('+', dataScreen),
+    "minus": () => addToDataScreen('-', dataScreen),
+    "dot": () => addToDataScreen('.', dataScreen),
     "equals": () => console.log("Calculating result"), // Call to display result
 };
 // Initialize buttons and add event listeners
 function initializeButtons(buttonIds, handler) {
     buttonIds.forEach(id => {
         const button = document.getElementById(id);
-        button?.addEventListener('click', () => handler(id));
+        button === null || button === void 0 ? void 0 : button.addEventListener('click', () => handler(id));
     });
 }
 // Event handler for number buttons
 function handleNumberButtonClick(id) {
+    var _a;
     const number = id.replace("btn_", "");
     console.log(`Number button ${number} pressed`);
-    numberButtonLogic[number]?.();
+    (_a = numberButtonLogic[number]) === null || _a === void 0 ? void 0 : _a.call(numberButtonLogic);
 }
 // Event handler for function buttons
 function handleFunctionButtonClick(id) {
+    var _a;
     const functionName = id.replace("btn_", "");
     console.log(`Function button ${functionName} pressed`);
-    functionButtonLogic[functionName]?.();
+    (_a = functionButtonLogic[functionName]) === null || _a === void 0 ? void 0 : _a.call(functionButtonLogic);
 }
-// Initialize number buttons
-initializeButtons(numberButtonIds, handleNumberButtonClick);
-// Initialize function buttons
-initializeButtons(functionButtonIds, handleFunctionButtonClick);
 // Supplementary functions
-function addToDataScreen(data) {
+function addToDataScreen(data, dataScreen) {
+    var _a;
     if (dataScreen) {
-        if (currentNumber.length > 0 && cleared == false || dataScreen?.textContent?.length != 1) {
+        if (currentNumber.length > 0 && cleared == false || ((_a = dataScreen === null || dataScreen === void 0 ? void 0 : dataScreen.textContent) === null || _a === void 0 ? void 0 : _a.length) != 1) {
             console.log('Enterd main');
             try {
                 let num = Number(data); // try to convert to number from string
@@ -114,10 +103,12 @@ function addToDataScreen(data) {
                     currentEquation.push(currentNumber);
                     currentEquation.push(data);
                     currentNumber = '';
-                    // Test Data
+                    // Called when a second operand is being added to equation
+                    // ########################################################
                     if (currentEquation.length > 3)
                         process_data();
                     console.log(currentEquation);
+                    // ########################################################
                 }
             }
         }
@@ -149,6 +140,45 @@ function addToDataScreen(data) {
     }
     console.log(currentEquation.length);
 }
+// Comes forward when any of the complex functions are used
+// Will use last number to calculate result and replace it
+function complex_proccess(func_number) {
+    let result = '';
+    let name = '';
+    switch (func_number) {
+        case 1:
+            result = MathFun.sin(currentNumber); // Use MathFun.sin
+            name = 'sin';
+            break;
+        case 2:
+            result = MathFun.cosin(currentNumber); // Use MathFun.cosin
+            name = 'cosin';
+            break;
+        case 3:
+            result = MathFun.tan(currentNumber); // Use MathFun.tan
+            name = 'tan';
+            break;
+        case 4:
+            result = MathFun.cotan(currentNumber); // Use MathFun.cotan
+            name = 'cotan';
+            break;
+        case 5:
+            result = MathFun.sqrt(currentNumber); // Use MathFun.sqrt
+            name = 'sqrt';
+            break;
+    }
+    // Current Position is 3
+    if (currentEquation.length > 1) {
+        currentEquation[2] = result;
+    }
+    // Current Position is 1
+    else {
+        currentEquation[0] = result;
+        if (dataScreen)
+            dataScreen.textContent = result;
+        historyEquations.push([currentNumber, name, 'None']);
+    }
+}
 // Done on amount of symols increase
 function process_data() {
     console.log("XXXXXXXXXXX Entered PORCCESS DATA XXXXXXXXXX");
@@ -159,7 +189,7 @@ function process_data() {
     currentEquation.pop();
     historyEquations.push(currentEquation);
     console.log(historyEquations);
-    let result = (0, math_1.calculate)(numbers, to_do); // Calculate result
+    let result = MathFun.calculate(numbers, to_do); // Calculate result
     to_move = " " + to_move + " "; // Makes it easier to read
     currentEquation = [result, to_move];
     if (dataScreen) {
@@ -174,3 +204,15 @@ function clearScreen() {
         cleared = true;
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const dataScreen = document.getElementById("DataScreen");
+    if (!dataScreen) {
+        console.error("DataScreen element not found!");
+        return;
+    }
+    // Initialize number buttons
+    initializeButtons(numberButtonIds, handleNumberButtonClick);
+    // Initialize function buttons
+    initializeButtons(functionButtonIds, handleFunctionButtonClick);
+    console.log("Calculator initialized successfully!");
+});

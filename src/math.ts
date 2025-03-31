@@ -3,6 +3,7 @@ function toRadians(degrees: number): number {
 }
 
 
+
 function formatResult(value: number): string {
     return String(Math.round((value + Number.EPSILON) * 100) / 100);
 }
@@ -16,7 +17,7 @@ export function calculate(nums: string[], operand: string): string {
         operand = operand.trim();
 
         switch (operand) {
-            // Basic arithmetic
+            // Basic
             case '+': return formatResult(num1 + num2);
             case '-': return formatResult(num1 - num2);
             case '/': 
@@ -25,22 +26,25 @@ export function calculate(nums: string[], operand: string): string {
             case '*': return formatResult(num1 * num2);
             case '**': return formatResult(Math.pow(num1, num2));
             
-            // Trig functions
+            // Advanced
             case 'sin': return sin(nums[0]);
             case 'cos': return cosin(nums[0]);
             case 'tan': return tan(nums[0]);
             case 'cotan': return cotan(nums[0]);
             
-            // Other operations
-            case 'sqrt': 
-                if (num1 < 0) return '0';
-                return formatResult(Math.sqrt(num1));
-                
             default: return '0';
         }
     } catch {
-        return '0';
+		return '0';
     }
+}
+
+
+
+export function sqrt(number: string): string {
+	let num1 = parseFloat(number)
+	if (num1 < 0) return '0';
+	return formatResult(Math.sqrt(num1));
 }
 
 
@@ -95,6 +99,22 @@ export function tan(degrees: string): string {
 export function cotan(degrees: string): string {
     return trigFunction(parseFloat(degrees), 'cotan');
 }
+
+
+// Must have
+
+if (typeof window !== 'undefined') {
+    (window as any).MathFun = {
+        calculate,
+        sin,
+        cosin,
+        tan,
+        cotan,
+        sqrt
+    };
+}
+
+
 
 
 // Define math logic ###DEPRICATED###
