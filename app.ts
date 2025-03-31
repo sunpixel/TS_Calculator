@@ -20,7 +20,7 @@ const mathOperations: { [key: string]: (x: string, y: string) => number } = {
     multiply: (x, y) => Number(x) * Number(y),
     division: (x, y) => Number(x) * Number(y),
     power: (x, y) => Math.pow(Number(x), Number(y)),
-    sqrt: (x) => Math.sqrt(Number(x))   // Needs checking for negative numbers
+    sqrt: (x) => Math.sqrt(Number(x))   // Needs checking for negative numbers (Not YET needed (Negatives not implemented))
   };
 
 
@@ -178,21 +178,59 @@ function addToDataScreen(data: string) {
     console.log(currentEquation.length)
 }
 
+// Done on amount of symols increase
+
 function process_data() {
-    console.log("XXXXXXXXXXX Entered CLEAR XXXXXXXXXX")
-    let to_do = currentEquation[1]      // Takes the operation that needs to be performed
-    let to_move = currentEquation [3]   // Takes operation that is to be moved
-    let numbers = [currentEquation[0], currentEquation[2]]
-    currentEquation.pop()
+    console.log("XXXXXXXXXXX Entered PORCCESS DATA XXXXXXXXXX")
+    let to_do = currentEquation[1].trim()									// Takes the operation that needs to be performed
+    let to_move = currentEquation [3].trim()								// Takes operation that is to be moved
+    let numbers = [currentEquation[0], currentEquation[2]]				// Numbers to be calculated
+    // Needs calculation of first equation before making other changes
     historyEquations.push(currentEquation)
     console.log(historyEquations)
+	let result = calculate(numbers, to_do)
+	to_move = " " + to_move + " "	// Makes it easier to read
+	currentEquation = [result, to_move]
+
+	if (dataScreen){
+		dataScreen.textContent = result + " " + to_move + " "
+	}
 }
 
-function calculate(nums: string[], operand: string) {
+function calculate(nums: string[], operand: string): string {
+	// converts string to number
+	let num1 = parseFloat(nums[0])
+	let num2 = parseFloat(nums[1])
+	let result: number = 0
+	operand = operand.trim()														// Left here just in case
+	// Switch statements for choosing where to go
+	switch (operand) {
+		case '+':
+			result = num1 + num2
+			return String(result)
+		case '-':
+			result = num1 - num2
+			return String(result)
+		case '/':
+			result = num1 / num2
+			return String(result)
+		case '*':
+			result = num1 * num2
+			return String(result)
 
+		// Complex operations
+		
+		case '**':
+			result = Math.pow(num1, num2)
+			return String(result)
+		default:
+			console.log('Default case')
+	}
+	return String(result)
 }
 
 function clearScreen() {
+	console.log("CLEAR entered")
     if(dataScreen && currentEquation.length < 3) {
         dataScreen.textContent = '0'
         currentEquation = []    // Clears array of all the elements
