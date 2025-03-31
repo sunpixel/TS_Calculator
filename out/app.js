@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const math_1 = require("./math");
 // Define button IDs
 const numberButtonIds = ["btn_0", "btn_1", "btn_2", "btn_3", "btn_4", "btn_5", "btn_6", "btn_7", "btn_8", "btn_9"];
 const functionButtonIds = [
@@ -10,7 +12,7 @@ let currentNumber = '';
 let currentEquation = []; // Delcare as empty
 let historyEquations = []; // Declare them as empty
 let cleared = false;
-// Define math logic
+// Define math logic ###DEPRICATED###
 const mathOperations = {
     add: (x, y) => Number(x) + Number(y),
     subtract: (x, y) => Number(x) - Number(y),
@@ -33,14 +35,14 @@ const numberButtonLogic = {
     "9": () => addToDataScreen('9'),
 };
 const functionButtonLogic = {
-    // Hard and annoying (postponed)
+    // Hard and annoying | Seperate function is to be created to work with them
     "sin": () => console.log("Calculating sine"),
     "cosin": () => console.log("Calculating cosine"),
     "tan": () => console.log("Calculating tangent"),
     "cotan": () => console.log("Calculating cotangent"),
-    "power": () => console.log("Calculating power"), // Needed
-    "root": () => console.log("Calculating square root"), // Needed
+    "root": () => console.log("Calculating square root"),
     // Main and easy
+    "power": () => addToDataScreen('**'),
     "clear": () => clearScreen(), // Call to clear
     "multiply": () => addToDataScreen('x'),
     "divide": () => addToDataScreen('/'),
@@ -154,38 +156,15 @@ function process_data() {
     let to_move = currentEquation[3].trim(); // Takes operation that is to be moved
     let numbers = [currentEquation[0], currentEquation[2]]; // Numbers to be calculated
     // Needs calculation of first equation before making other changes
+    currentEquation.pop();
     historyEquations.push(currentEquation);
     console.log(historyEquations);
-    let result = calculate(numbers, to_do);
+    let result = (0, math_1.calculate)(numbers, to_do); // Calculate result
     to_move = " " + to_move + " "; // Makes it easier to read
     currentEquation = [result, to_move];
     if (dataScreen) {
         dataScreen.textContent = result + " " + to_move + " ";
     }
-}
-function calculate(nums, operand) {
-    // converts string to number
-    let num1 = parseFloat(nums[0]);
-    let num2 = parseFloat(nums[1]);
-    let result = 0;
-    // Switch statements for choosing where to go
-    switch (operand) {
-        case '+':
-            result = num1 + num2;
-            return String(result);
-        case '-':
-            result = num1 - num2;
-            return String(result);
-        case '/':
-            result = num1 / num2;
-            return String(result);
-        case '*':
-            result = num1 * num2;
-            return String(result);
-        default:
-            console.log('Default case');
-    }
-    return String(result);
 }
 function clearScreen() {
     console.log("CLEAR entered");

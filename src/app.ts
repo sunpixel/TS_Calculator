@@ -1,3 +1,6 @@
+import * as MathFun from "./math";
+
+
 // Define button IDs
 const numberButtonIds = ["btn_0", "btn_1", "btn_2", "btn_3", "btn_4", "btn_5", "btn_6", "btn_7", "btn_8", "btn_9"];
 const functionButtonIds = [
@@ -7,12 +10,12 @@ const functionButtonIds = [
 
 const dataScreen = document.getElementById("DataScreen")
 let currentNumber: string = ''
-let currentEquation: string[] = []      // Delcare as empty
-let historyEquations: string[][] = []   // Declare them as empty
+let currentEquation: string[] = []      // Represent an equation that will happen
+let historyEquations: string[][] = []   // A history of all availiable equations
 
 let cleared = false
 
-// Define math logic
+// Define math logic ###DEPRICATED###
 
 const mathOperations: { [key: string]: (x: string, y: string) => number } = {
     add: (x, y) => Number(x) + Number(y),
@@ -40,17 +43,16 @@ const numberButtonLogic: { [key: string]: () => void } = {
 
 const functionButtonLogic: { [key: string]: () => void } = {
 
-    // Hard and annoying (postponed)
+    // Hard and annoying | Seperate function is to be created to work with them
 
     "sin": () => console.log("Calculating sine"),
     "cosin": () => console.log("Calculating cosine"),
     "tan": () => console.log("Calculating tangent"),
     "cotan": () => console.log("Calculating cotangent"),
-    "power": () => console.log("Calculating power"),        // Needed
-    "root": () => console.log("Calculating square root"),   // Needed
+    "root": () => console.log("Calculating square root"),
 
     // Main and easy
-
+    "power": () => addToDataScreen('**'),
     "clear": () =>  clearScreen(),   // Call to clear
     "multiply": () => addToDataScreen('x'),
     "divide": () => addToDataScreen('/'),
@@ -139,9 +141,14 @@ function addToDataScreen(data: string) {
                     currentEquation.push(currentNumber)
                     currentEquation.push(data)
                     currentNumber = ''
-                    // Test Data
+
+                    // Called when a second operand is being added to equation
+                    // ########################################################
+
                     if (currentEquation.length > 3) process_data()
                     console.log(currentEquation)
+
+                    // ########################################################
                 }
             }
         }
@@ -178,6 +185,17 @@ function addToDataScreen(data: string) {
     console.log(currentEquation.length)
 }
 
+// Comes forward when any of the complex functions are used
+// Will use last number to calculate result and replace it
+
+function complex_proccess(func_number: number){
+    switch(func_number){
+        case 1: 
+            MathFun.sin(currentNumber)
+            break;
+    }
+}
+
 // Done on amount of symols increase
 
 function process_data() {
@@ -186,10 +204,13 @@ function process_data() {
     let to_move = currentEquation [3].trim()								// Takes operation that is to be moved
     let numbers = [currentEquation[0], currentEquation[2]]				// Numbers to be calculated
     // Needs calculation of first equation before making other changes
+	currentEquation.pop()
     historyEquations.push(currentEquation)
     console.log(historyEquations)
-	let result = calculate(numbers, to_do)
-	to_move = " " + to_move + " "	// Makes it easier to read
+
+	let result = MathFun.calculate(numbers, to_do)							// Calculate result
+
+	to_move = " " + to_move + " "													// Makes it easier to read
 	currentEquation = [result, to_move]
 
 	if (dataScreen){
@@ -197,37 +218,7 @@ function process_data() {
 	}
 }
 
-function calculate(nums: string[], operand: string): string {
-	// converts string to number
-	let num1 = parseFloat(nums[0])
-	let num2 = parseFloat(nums[1])
-	let result: number = 0
-	operand = operand.trim()														// Left here just in case
-	// Switch statements for choosing where to go
-	switch (operand) {
-		case '+':
-			result = num1 + num2
-			return String(result)
-		case '-':
-			result = num1 - num2
-			return String(result)
-		case '/':
-			result = num1 / num2
-			return String(result)
-		case '*':
-			result = num1 * num2
-			return String(result)
 
-		// Complex operations
-		
-		case '**':
-			result = Math.pow(num1, num2)
-			return String(result)
-		default:
-			console.log('Default case')
-	}
-	return String(result)
-}
 
 function clearScreen() {
 	console.log("CLEAR entered")
