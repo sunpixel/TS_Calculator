@@ -143,11 +143,15 @@ function addToDataScreen(data, dataScreen) {
 // Comes forward when any of the complex functions are used
 // Will use last number to calculate result and replace it
 function complex_proccess(func_number) {
+    var _a;
     let result = '';
     let name = '';
     switch (func_number) {
         case 1:
             result = MathFun.sin(currentNumber); // Use MathFun.sin
+            console.log("SIN enter");
+            console.log(result);
+            console.log(currentNumber);
             name = 'sin';
             break;
         case 2:
@@ -170,6 +174,9 @@ function complex_proccess(func_number) {
     // Current Position is 3
     if (currentEquation.length > 1) {
         currentEquation[2] = result;
+        if (dataScreen)
+            dataScreen.textContent = (_a = dataScreen.textContent) === null || _a === void 0 ? void 0 : _a.replace(currentNumber, result);
+        historyEquations.push([currentNumber, name, 'None']);
     }
     // Current Position is 1
     else {

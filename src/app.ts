@@ -174,6 +174,9 @@ function complex_proccess(func_number: number) {
     switch (func_number) {
         case 1:
             result = MathFun.sin(currentNumber); // Use MathFun.sin
+            console.log("SIN enter")
+            console.log(result)
+            console.log(currentNumber)
             name = 'sin';
             break;
         case 2:
@@ -196,6 +199,8 @@ function complex_proccess(func_number: number) {
     // Current Position is 3
     if (currentEquation.length > 1) {
         currentEquation[2] = result
+        if (dataScreen) dataScreen.textContent = dataScreen.textContent?.replace(currentNumber, result)!
+        historyEquations.push([currentNumber, name, 'None'])
     }
     // Current Position is 1
     else {
